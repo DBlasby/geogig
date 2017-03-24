@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.locationtech.geogig</groupId>
+  <artifactId>cucumber-workflow</artifactId>
+  <packaging>jar</packaging>
+  <version>1.1-SNAPSHOT</version>
+  <name>cucumber-workflow</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <cucumber-java.version>1.2.5</cucumber-java.version>
+      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.8</maven.compiler.target>
+      <gt.version>15.1</gt.version>
+
+  </properties>
+    <repositories>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net repository</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>osgeo</id>
+            <name>Open Source Geospatial Foundation Repository</name>
+            <url>http://download.osgeo.org/webdav/geotools/</url>
+        </repository>
+    </repositories>
+
+  <dependencies>
+      <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-wfs-ng</artifactId>
+          <version>${gt.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.locationtech.geogig</groupId>
+          <artifactId>geogig-postgres</artifactId>
+          <version>1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.locationtech.geogig</groupId>
+          <artifactId>geogig-cli</artifactId>
+          <version>1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.locationtech.geogig</groupId>
+          <artifactId>geogig-geotools</artifactId>
+          <version>1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+          <version>4.5.2</version>
+      </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.10</version>
+     </dependency>
+ <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>${cucumber-java.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>info.cukes</groupId>
+          <artifactId>cucumber-core</artifactId>
+          <version>1.2.5</version>
+      </dependency>
+      <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-junit</artifactId>
+        <version>${cucumber-java.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+  </dependencies>
+</project>
