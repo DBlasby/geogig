@@ -139,4 +139,15 @@ public class CucumberBindings_geogig {
         if (transactionSharingGeogigRest.ntotalactions < n)
             throw new Exception("only " + transactionSharingGeogigRest.ntotalactions + " features affected.");
     }
+
+
+    @Given("^GeoGIG: Verify Tree Names \"([^\"]+)\" (.*)$")
+    public void verify_names(String reponame,String layername) throws Throwable {
+        reponame = Variables.replaceVariables(reponame);
+        layername = Variables.replaceVariables(layername);
+
+        RawGeoGIG rawGeoGIG = new RawGeoGIG(reponame,layername);
+
+        rawGeoGIG.verifyNames();
+     }
 }

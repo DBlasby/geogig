@@ -129,6 +129,7 @@ Feature: CucumberJava
     Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
     Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
     Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}
 
     And I setup a transaction against WFS,MEMORY
     And      I delete features "featureNumber=0 or featureNumber=1"
@@ -137,7 +138,8 @@ Feature: CucumberJava
     When I Query "INCLUDE" against WFS,MEMORY
     Then Assert Query results are equivalent
 
-    And GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
-    And GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
-
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
+    Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}
 

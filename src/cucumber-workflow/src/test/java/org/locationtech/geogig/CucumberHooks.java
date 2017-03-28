@@ -29,11 +29,14 @@ public class CucumberHooks {
         GeoserverRest geoserverRest = new GeoserverRest(baseURL);
         geoserverRest.deleteWorkSpace(wsname);
 
-        dbname = Variables.replaceVariables(dbname);
-        String sql = "DROP DATABASE "+dbname;
-        String user = Variables.replaceVariables("${POSTGRES_USER}");
-        String pass = Variables.replaceVariables("${POSTGRES_PASS}");
-        Postgresql postgresql  = new Postgresql(dbname, user,pass);
-        postgresql.executeSQL(sql);
+        //cannot remove repo from geoserver
+        // db will likely be active (due to geoserver connection pool) so cannot easily drop it
+
+//        dbname = Variables.replaceVariables(dbname);
+//        String sql = "DROP DATABASE "+dbname;
+//        String user = Variables.replaceVariables("${POSTGRES_USER}");
+//        String pass = Variables.replaceVariables("${POSTGRES_PASS}");
+//        Postgresql postgresql  = new Postgresql(dbname, user,pass);
+//        postgresql.executeSQL(sql);
     }
 }
