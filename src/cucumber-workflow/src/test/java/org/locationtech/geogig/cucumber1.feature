@@ -24,8 +24,8 @@ Feature: CucumberJava
     And      Update set the_geom = "MULTIPOLYGON(((20 20, 20 21, 21 21,21 20,20 20)))" WHERE "IN ('0de17f0e-119c-4b49-94d6-c79e6fef870b')"
     And   I commit the transaction
 
-    And I Query "GID = '0de17f0e-119c-4b49-94d6-c79e6fef870b'" against WFS
-    And Assert query returns 1 features
+    When I Query "GID = '0de17f0e-119c-4b49-94d6-c79e6fef870b'" against WFS
+    Then Assert query returns 1 features
 
 
   Scenario: Create Feature Type
@@ -47,8 +47,8 @@ Feature: CucumberJava
     And      I insert 5 features "geom=MULTIPOLYGON(((10 10, 10 11, 11 11,11 10,10 10)));tag=group1;featureNumber=${currentFeatureNumber};groupNumber=${currentGroupNumber};numbInGroup=${currentFeatureNumbInGroup};int1=111;string1=my string;double1=666;guid=guid.s"
     And I commit the transaction
 
-    And I Query "INCLUDE" against WFS,MEMORY
-    And Assert Query results are equivalent
+    When I Query "INCLUDE" against WFS,MEMORY
+    Then Assert Query results are equivalent
 
 
     Scenario: Load data mapstory-style
@@ -95,8 +95,8 @@ Feature: CucumberJava
     And GeoGig: Execute "${GIG_REPO}" "commit -m shpload"
     And GeoGig: Execute "${GIG_REPO}" "index create --tree ${LAYER_NAME} --attribute the_geom"
 
-    And GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
-    And GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
 
     And Geoserver: Create Workspace ${WS_NAME}
     And Geoserver: Create GeoGIG Datastore ${WS_NAME} ${REPO_NAME} ${DS_NAME} branch=master
@@ -123,19 +123,19 @@ Feature: CucumberJava
     And      I insert 130 features "geom=MULTIPOLYGON(((10 10, 10 11, 11 11,11 10,10 10)));tag=group1;featureNumber=${currentFeatureNumber};groupNumber=${currentGroupNumber};numbInGroup=${currentFeatureNumbInGroup};int1=111;string1=my string;double1=666;guid=guid.s"
     And I commit the transaction
 
-    And I Query "INCLUDE" against WFS,MEMORY
-    And Assert Query results are equivalent
+    When I Query "INCLUDE" against WFS,MEMORY
+    Then Assert Query results are equivalent
 
-    And GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
-    And GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
-    And GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
+    Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
 
     And I setup a transaction against WFS,MEMORY
     And      I delete features "featureNumber=0 or featureNumber=1"
     And I commit the transaction
 
-    And I Query "INCLUDE" against WFS,MEMORY
-    And Assert Query results are equivalent
+    When I Query "INCLUDE" against WFS,MEMORY
+    Then Assert Query results are equivalent
 
     And GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
     And GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}

@@ -11,6 +11,7 @@ package org.locationtech.geogig;
 
 import cucumber.api.java.en.Given;
 import org.locationtech.geogig.REST.GeoGIGRest;
+import org.locationtech.geogig.geogig.RawGeoGIG;
 
 import java.util.List;
 

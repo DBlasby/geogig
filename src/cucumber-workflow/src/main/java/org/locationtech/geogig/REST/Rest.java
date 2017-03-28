@@ -18,6 +18,7 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -29,7 +30,9 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -53,6 +56,12 @@ public class Rest {
         httpclient = HttpClientBuilder.create()
                 .setDefaultCredentialsProvider(provider)
                 .build();
+
+        Authenticator.setDefault (new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication ("admin", "geoserver".toCharArray());
+            }
+        });
     }
 
     public   String doGet(String url,int expectedResultCode) throws Exception {
@@ -63,6 +72,21 @@ public class Rest {
         response.close();
         return result;
     }
+
+    public String doDelete( String url) throws Exception {
+        HttpURLConnection httpCon = (HttpURLConnection)(new URL(baseURL+url)).openConnection();
+        httpCon.setRequestMethod("DELETE"); //it's a post request
+        int responseCode = httpCon.getResponseCode();
+        InputStream response = httpCon.getInputStream();
+        String responseString = IOUtils.toString(response, "UTF-8");
+        response.close();
+
+
+        if  ( (responseCode != 200)  && (responseCode != 202) && (responseCode != 204) )
+            throw new Exception("Delete failed! "+responseString);
+        return responseString;
+    }
+
 
     public   String doGet(String url, List<NameValuePair> params,int expectedResultCode) throws Exception {
         String query= "";

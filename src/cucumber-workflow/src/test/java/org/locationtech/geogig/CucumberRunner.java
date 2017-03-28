@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         format = { "pretty", "html:target/cucumber" },
-        features = "classpath:cucumber/calculator.feature"
+        features = "src/test/java/org/locationtech/geogig"
 )
 
 public class CucumberRunner {

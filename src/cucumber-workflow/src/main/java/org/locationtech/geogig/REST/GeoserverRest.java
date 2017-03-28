@@ -29,6 +29,10 @@ public class GeoserverRest  extends Rest {
         String response = doPost("/workspaces", "<workspace><name>"+name+"</name></workspace>", 201);
      }
 
+    public void deleteWorkSpace(String wsname) throws Exception {
+        String response = doDelete("/workspaces/"+wsname+"?recurse=true");
+    }
+
     public   void verifyWorkSpace(String name) throws Exception {
         String response = doGet("/workspaces/"+name,200);
     }
@@ -82,6 +86,8 @@ public class GeoserverRest  extends Rest {
 
         String result = doPost("/workspaces/"+wsname+"/datastores/"+dsname+"/featuretypes", xml,201);
     }
+
+
 
     public static class DimensionInfo {
 
