@@ -15,7 +15,7 @@ import org.locationtech.geogig.REST.GeoserverRest;
 
 public class CucumberHooks {
 
-    @After
+    //@After
     public void afterScenario() throws Exception {
         String cleanup = Variables.replaceVariables("${CLEANUP}");
         if  ( (cleanup == null) || (cleanup.length() ==0) || (cleanup.equalsIgnoreCase("false")) )

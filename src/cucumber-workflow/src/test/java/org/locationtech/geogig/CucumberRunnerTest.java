@@ -19,5 +19,5 @@ import org.junit.runner.RunWith;
         features = "src/test/java/org/locationtech/geogig"
 )
 
-public class CucumberRunner {
+public class CucumberRunnerTest {
 }

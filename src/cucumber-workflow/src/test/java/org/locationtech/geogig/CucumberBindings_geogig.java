@@ -13,6 +13,7 @@ import cucumber.api.java.en.Given;
 import org.locationtech.geogig.REST.GeoGIGRest;
 import org.locationtech.geogig.geogig.RawGeoGIG;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -38,12 +39,16 @@ public class CucumberBindings_geogig {
         rawGeoGIG.execute(cmd);
     }
 
-    @Given("^GeoGIG: Verify the Index Exists \"([^\"]+)\" (.*)$")
-    public void I_verify_Index_Exists(String reponame,String layername) throws Throwable {
+    @Given("^GeoGIG: Verify the Index Exists \"([^\"]+)\" ([^ ]*)$")
+    public void verify_Index_Exists(String reponame,String layername) throws Throwable {
+        verify_Index_Exists(reponame,layername, new ArrayList<String>() );
+    }
+        @Given("^GeoGIG: Verify the Index Exists \"([^\"]+)\" (.*) WITH (.*)$")
+    public void verify_Index_Exists(String reponame,String layername,List<String> extras) throws Throwable {
         reponame = Variables.replaceVariables(reponame);
         layername = Variables.replaceVariables(layername);
         RawGeoGIG rawGeoGIG = new RawGeoGIG(reponame,layername);
-        rawGeoGIG.assertIndexExists();
+        rawGeoGIG.assertIndexExists(extras);
     }
 
     @Given("^GeoGIG: Verify Tree and Feature Bounds \"([^\"]+)\" (.*) against ([^ ]+)$")

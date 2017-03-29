@@ -126,7 +126,7 @@ Feature: CucumberJava
     When I Query "INCLUDE" against WFS,MEMORY
     Then Assert Query results are equivalent
 
-    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME} WITH featureNumber
     Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
     Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
     Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}
@@ -143,3 +143,32 @@ Feature: CucumberJava
     Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
     Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}
 
+
+  Scenario: Null geometry test
+    Given Variable: Create New UUID
+    And  Variable: Set DB_NAME=gigdb_${UUID}
+    And Variable: Set REPO_NAME=gigrepo_${UUID}
+    And Variable: Set WS_NAME=gigws_${UUID}
+    And Variable: Set DS_NAME=gigds_${UUID}
+    And Variable: Set LAYER_NAME=giglayer_${UUID}
+    And Variable: Set GIG_REPO=postgresql://localhost:5432/${DB_NAME}/${REPO_NAME}?user=${POSTGRES_USER}&password=${POSTGRES_PASS}
+
+    And SQL Execute template1 "CREATE DATABASE ${DB_NAME}"
+    And GeoGIG: Init repo ${DB_NAME} ${REPO_NAME}
+    And Geoserver: Create Workspace ${WS_NAME}
+    And Geoserver: Create GeoGIG Datastore ${WS_NAME} ${REPO_NAME} ${DS_NAME}
+    And Create FeatureType ${WS_NAME} ${DS_NAME} ${LAYER_NAME} "geom:MultiPolygon:srid=3857,tag:String,featureNumber:Integer,groupNumber:Integer,numbInGroup:Integer,int1:Integer,string1:String,double1:Double,guid:String"
+    And GeoGig: Execute "${GIG_REPO}" "index create --tree ${LAYER_NAME} --attribute geom -e featureNumber"
+
+    And I setup a transaction against WFS,MEMORY
+    And      I insert 1 features "geom=MULTIPOLYGON(((10 10, 10 11, 11 11,11 10,10 10)));tag=group1;featureNumber=${currentFeatureNumber};groupNumber=${currentGroupNumber};numbInGroup=${currentFeatureNumbInGroup};int1=111;string1=my string;double1=666;guid=guid.s"
+    And      I insert 1 features "tag=group1;featureNumber=${currentFeatureNumber};groupNumber=${currentGroupNumber};numbInGroup=${currentFeatureNumbInGroup};int1=111;string1=my string;double1=666;guid=guid.s"
+    And I commit the transaction
+
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME} WITH featureNumber
+    Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
+    Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}
+
+    When I Query "INCLUDE" against WFS,MEMORY
+    Then Assert Query results are equivalent
