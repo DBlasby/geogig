@@ -83,6 +83,7 @@ public class DataStoreActions {
                 action.execute(store);
             }
             t.commit();
+            t.close();
         }
     }
 

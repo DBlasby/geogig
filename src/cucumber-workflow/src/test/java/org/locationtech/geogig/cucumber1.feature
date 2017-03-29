@@ -138,7 +138,7 @@ Feature: CucumberJava
     When I Query "INCLUDE" against WFS,MEMORY
     Then Assert Query results are equivalent
 
-    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME}
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME} WITH featureNumber
     Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
     Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
     Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}
