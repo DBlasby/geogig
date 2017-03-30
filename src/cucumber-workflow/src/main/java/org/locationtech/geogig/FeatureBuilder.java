@@ -17,6 +17,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 //simple class to allow construction of features
 //according to a specification
@@ -30,6 +31,11 @@ public class FeatureBuilder {
     static int currentFeatureNumber;
     static int currentGroupNumber;
     int currentFeatureNumbInGroup;
+
+    static {
+        System.setProperty("user.timezone", "GMT");
+        TimeZone.setDefault( TimeZone.getTimeZone("GMT"));
+    }
 
     public FeatureBuilder(SimpleFeatureType featureType, List<String> values) {
         this.featureType = featureType;

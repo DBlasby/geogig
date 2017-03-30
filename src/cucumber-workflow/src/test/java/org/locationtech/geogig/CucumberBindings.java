@@ -184,7 +184,7 @@ public class CucumberBindings {
 
 
 
-    @Given("^Update set ([^ ]+) = \"([^\"]+)\" WHERE \"([^\"]+)\"$")
+    @Given("^Update set ([^ ]+)=\"([^\"]+)\" WHERE \"([^\"]+)\"$")
     public void update(String attribute, String value, String cqlFilter) throws  Exception {
         attribute = Variables.replaceVariables(attribute);
         value = Variables.replaceVariables(value);
