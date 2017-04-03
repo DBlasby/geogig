@@ -9,6 +9,7 @@
  */
 package org.locationtech.geogig.geogig;
 
+import com.google.common.base.Optional;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import org.eclipse.jdt.annotation.Nullable;
@@ -51,13 +52,17 @@ public class ExtraAttributeVerifyingConsumer extends PreOrderDiffWalk.AbstractCo
     @Override
     public synchronized boolean feature(@Nullable final NodeRef left,
                                         @Nullable final NodeRef right) {
-        Envelope nodeEnv = right.getNode().bounds().get();
+
+        Optional<Envelope> nodeEnv = right.getNode().bounds() ;
         RevFeature feature = (RevFeature) db.get(right.getObjectId());
 
         //bounds
-        Geometry g = (Geometry) feature.get(geomindx).get();
-        Envelope geomEnv = g.getEnvelopeInternal();
-        assertTrue(nodeEnv.contains(geomEnv));
+        com.google.common.base.Optional<Object>  gg =  feature.get(geomindx);
+        if (gg.isPresent()) {
+            Geometry g = (Geometry) gg.get();
+            Envelope geomEnv = g.getEnvelopeInternal();
+            assertTrue(nodeEnv.get().contains(geomEnv));
+        }
 
         //extra attributes
         Map<String, Object> nodeExtraAttributes = (Map<String, Object>) right.getNode().getExtraData().get(("@attributes"));

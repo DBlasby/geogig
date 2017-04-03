@@ -22,6 +22,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
@@ -127,7 +128,7 @@ public class BoundsVerifyingWalker {
         ObjectId id = node.getId();
         Envelope computedBounds = new Envelope();
         for (Node feature : node.features()) {
-            Envelope featEnv = feature.bounds().get();
+            Envelope featEnv = feature.bounds().or(new Envelope());
             computedBounds.expandToInclude(featEnv);
             nFeatures++;
             if (this.featureDataStore != null) {
@@ -149,7 +150,10 @@ public class BoundsVerifyingWalker {
     //       be larger than (contain) the actual geometry.
     private void verifyFeature(ObjectId objectId, Envelope featEnv) {
         RevFeature feature = (RevFeature) featureDataStore.get(objectId);
-        Geometry g = (Geometry) feature.get(geomindx).get();
+        com.google.common.base.Optional<Object>  gg =  feature.get(geomindx);
+        if (!gg.isPresent())
+            return;
+        Geometry g = (Geometry) gg.get();
         Envelope geomEnv = g.getEnvelopeInternal();
 
         assertTrue(featEnv.contains(geomEnv));
