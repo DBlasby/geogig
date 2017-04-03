@@ -87,6 +87,16 @@ public class GeoserverRest  extends Rest {
         String result = doPost("/workspaces/"+wsname+"/datastores/"+dsname+"/featuretypes", xml,201);
     }
 
+    public void updatePublishLayer(String wsname, String dsname, String layername,DimensionInfo dimensionInfo) throws Exception {
+        String xml;
+        if (dimensionInfo == null)
+            xml ="<featureType><name>"+layername+"</name><enabled>true</enabled></featureType>";
+        else
+            xml ="<featureType><name>"+layername+"</name><enabled>true</enabled><metadata>"+dimensionInfo.toXML()+"</metadata></featureType>";
+
+        String result = doPutXML("/workspaces/"+wsname+"/datastores/"+dsname+"/featuretypes/"+layername, xml,200);
+    }
+
 
 
     public static class DimensionInfo {

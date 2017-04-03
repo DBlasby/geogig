@@ -119,6 +119,18 @@ public class Rest {
         response.close();
         return result;
     }
+    public   String doPutXML(String url, String xml,int expectedResultCode) throws Exception {
+        HttpPut request = new HttpPut( baseURL + url );
+        request.setHeader("Content-type","text/xml");
+        HttpEntity entity = new ByteArrayEntity(xml.getBytes("UTF-8"));
+        request.setEntity(entity);
+        CloseableHttpResponse response = httpclient.execute(request);
+        verifyResponseCode(response, expectedResultCode);
+        String result = getBody(response);
+        response.close();
+        return result;
+    }
+
     public   String doPutJson(String url, String json,int expectedResultCode) throws Exception {
         HttpPut request = new HttpPut( baseURL + url );
         request.setHeader("Content-type","application/json");

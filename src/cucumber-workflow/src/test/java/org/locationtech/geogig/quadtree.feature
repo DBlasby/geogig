@@ -49,6 +49,8 @@ Scenario: Quadtree root unpromotable
   Scenario: Quadtree update extraAttribute value
 
     Given Create FeatureType ${WS_NAME} ${DS_NAME} ${LAYER_NAME} "geom:MultiPolygon:srid=4326,tag:String,featureNumber:Integer,groupNumber:Integer,numbInGroup:Integer,int1:Integer,string1:String,double1:Double,guid:String,date:Date"
+    And Geoserver: RePublish Layer ${WS_NAME} ${DS_NAME} ${LAYER_NAME} time:date:ISO8601:LIST:MINIMUM
+
     And GeoGig: Execute "${GIG_REPO}" "index create --tree ${LAYER_NAME} --attribute geom -e date"
 
     And I setup a transaction against WFS,MEMORY
@@ -59,19 +61,19 @@ Scenario: Quadtree root unpromotable
     When I Query "INCLUDE" against WFS,MEMORY
     Then Assert Query results are equivalent
 
-    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME} WITH featureNumber
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME} WITH date
     Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
     Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
     Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}
 
     And I setup a transaction against WFS,MEMORY
-    And      Update set date="2000-02-02 02:02:02TZ" WHERE "INCLUDE"
+    And      Update set date="2000-02-02 02:02:02" WHERE "featureNumber=1"
     And I commit the transaction
 
     When I Query "INCLUDE" against WFS,MEMORY
     Then Assert Query results are equivalent
 
-    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME} WITH featureNumber
+    Then GeoGIG: Verify the Index Exists "${GIG_REPO}" ${LAYER_NAME} WITH date
     Then GeoGIG: Verify Tree and Feature Bounds "${GIG_REPO}" ${LAYER_NAME} against INDEX,CANONICAL
     Then GeoGIG: Verify Index Extra Data "${GIG_REPO}" ${LAYER_NAME}
     Then GeoGIG: Verify Tree Names "${GIG_REPO}" ${LAYER_NAME}

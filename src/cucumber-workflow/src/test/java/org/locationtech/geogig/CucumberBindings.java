@@ -73,8 +73,42 @@ public class CucumberBindings {
         publish_on_geoserver(wsname,dsname,layername,"");
     }
 
+    @Given("^Geoserver: RePublish Layer ([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+)$")
+    public void republish_on_geoserver(String wsname, String dsname, String layername,String diminfo) throws Exception {
+        wsname = Variables.replaceVariables(wsname);
+        dsname = Variables.replaceVariables(dsname);
+        layername = Variables.replaceVariables(layername);
+        diminfo = Variables.replaceVariables(diminfo);
 
-    @Given("^Geoserver: Publish Layer ([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+)$")
+        //time:decade:ISO8601:LIST:MINIMUM -->
+        //<entry key="time">
+        //  <dimensionInfo>
+        //    	<enabled>true</enabled>
+        //    	<attribute>decade</attribute>
+        //    	<presentation>LIST</presentation>
+        //    	<units>ISO8601</units>
+        //    	<defaultValue>
+        //      	<strategy>MINIMUM</strategy>
+        //    	</defaultValue>
+        //  </dimensionInfo>
+        //</entry>
+
+        GeoserverRest.DimensionInfo dimensionConfig = null;
+        if ( (diminfo != null) && (diminfo.length() >0) ){
+            String[] details= diminfo.split(":");
+            dimensionConfig = new GeoserverRest.DimensionInfo(details[0],true,details[1],details[2], details[3],details[4]);
+        }
+
+        String baseURL = Variables.replaceVariables("http://${GEOSERVER_HOST}/geoserver/rest");
+        GeoserverRest geoserverRest = new GeoserverRest(baseURL);
+        geoserverRest.updatePublishLayer(wsname,dsname,layername,dimensionConfig);
+        //  wfsQuery = new WFS(wsname,layername);
+        String getCapURL = Variables.replaceVariables("http://${GEOSERVER_HOST}/geoserver/wfs?REQUEST=GetCapabilities&VERSION=1.0.0");
+        wfsClient = new WFSSimpleClient(getCapURL,"admin", "geoserver", wsname, layername);
+
+        }
+
+        @Given("^Geoserver: Publish Layer ([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+)$")
     public void publish_on_geoserver(String wsname, String dsname, String layername,String diminfo) throws Exception {
         wsname = Variables.replaceVariables(wsname);
         dsname = Variables.replaceVariables(dsname);
