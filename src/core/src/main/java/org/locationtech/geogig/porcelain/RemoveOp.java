@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import org.locationtech.geogig.di.CanRunDuringConflict;
 import org.locationtech.geogig.model.DiffEntry;
 import org.locationtech.geogig.model.Node;
@@ -241,8 +242,15 @@ public class RemoveOp extends AbstractGeoGigOp<DiffObjectCount> {
                 .setStrategy(Strategy.DEPTHFIRST_ONLY_TREES)
                 .setReference(workTree.getId().toString()).call();
 
+        //NodeRef::path, but friendly for Fortify
+        Function<NodeRef, String> fn_path =  new Function<NodeRef, String>() {
+            @Override
+            public String apply(NodeRef noderef) {
+                return noderef.path();
+            }};
+
         ImmutableMap<String, NodeRef> treesByPath = Maps.uniqueIndex(childTrees,
-                (ref) -> ref.path());
+                fn_path);
 
         Set<String> requestedTrees = Sets.intersection(treesByPath.keySet(),
                 new HashSet<>(pathsToRemove));

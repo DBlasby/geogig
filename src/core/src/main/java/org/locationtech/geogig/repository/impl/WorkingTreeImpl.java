@@ -328,8 +328,16 @@ public class WorkingTreeImpl implements WorkingTree {
         checkArgument(progress != null);
 
         final RevTree currentWorkHead = getTree();
+
+        //NodeRef::path, but friendly for Fortify
+        Function<NodeRef, String> fn_path =  new Function<NodeRef, String>() {
+            @Override
+            public String apply(NodeRef noderef) {
+                return noderef.path();
+            }};
+
         final Map<String, NodeRef> currentTrees = Maps
-                .newHashMap(Maps.uniqueIndex(getFeatureTypeTrees(), (nr) -> nr.path()));
+                .newHashMap(Maps.uniqueIndex(getFeatureTypeTrees(), fn_path));
 
         Map<String, CanonicalTreeBuilder> parentBuilders = new HashMap<>();
 

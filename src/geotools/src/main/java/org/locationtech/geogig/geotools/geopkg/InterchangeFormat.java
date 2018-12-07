@@ -264,8 +264,16 @@ public class InterchangeFormat {
         try (Connection connection = dataSource.getConnection();
                 GeopkgGeogigMetadata metadata = new GeopkgGeogigMetadata(connection)) {
 
+
+            //Ref::getName, but friendly for Fortify
+            Function<AuditTable, String> fn_getTableName =  new Function<AuditTable, String>() {
+                @Override
+                public String apply(AuditTable at) {
+                    return at.getTableName();
+                }};
+
             final Map<String, AuditTable> tables = Maps.filterKeys(
-                    Maps.uniqueIndex(metadata.getAuditTables(), t -> t.getTableName()),
+                    Maps.uniqueIndex(metadata.getAuditTables(), fn_getTableName),
                     k -> importTables.isEmpty() || importTables.contains(k));
 
             checkState(tables.size() > 0, "No table to import.");

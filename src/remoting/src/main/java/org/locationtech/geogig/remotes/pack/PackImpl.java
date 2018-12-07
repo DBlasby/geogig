@@ -177,8 +177,15 @@ class PackImpl implements Pack {
     private List<ObjectId[]> collectMissingRootTreeIdPairs(List<RevCommit> commits,
             ObjectDatabase sourceStore) {
 
+        //RevObject::getId, but friendly for Fortify
+        com.google.common.base.Function<RevCommit, ObjectId> fn_getId =  new com.google.common.base.Function<RevCommit, ObjectId>() {
+            @Override
+            public ObjectId apply(RevCommit revobj) {
+                return revobj.getId();
+            }};
+
         final Map<ObjectId, RevCommit> rootsById = new HashMap<>(
-                Maps.uniqueIndex(commits, (c) -> c.getId()));
+                Maps.uniqueIndex(commits,fn_getId));
 
         List<ObjectId[]> diffRootTreeIds = new ArrayList<>();
 
