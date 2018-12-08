@@ -560,7 +560,15 @@ public class InterchangeFormat {
             this.builder = new SimpleFeatureBuilder(type);
             this.builder.setValidating(false);
             List<AttributeDescriptor> descriptors = type.getAttributeDescriptors();
-            this.attNames = Lists.transform(descriptors, at -> at.getLocalName());
+
+            // at -> at.getLocalName()
+            Function<AttributeDescriptor, String> fn =  new Function<AttributeDescriptor, String>() {
+                @Override
+                public String apply(AttributeDescriptor at) {
+                    return  at.getLocalName();
+                }};
+
+            this.attNames = Lists.transform(descriptors, fn);
             GeometryDescriptor geometryDescriptor = type.getGeometryDescriptor();
             this.geometryAttribute = geometryDescriptor == null ? null
                     : geometryDescriptor.getLocalName();

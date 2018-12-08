@@ -203,17 +203,38 @@ public class RemoveOp extends AbstractGeoGigOp<DiffObjectCount> {
     private void stageDeletes(Iterator<NodeRef> trees, Iterator<String> features) {
         final StagingArea index = stagingArea();
 
-        Iterator<DiffEntry> treeDeletes = Iterators.transform(trees,
-                (treeRef) -> new DiffEntry(treeRef, null));
+        //(treeRef) -> new DiffEntry(treeRef, null), but friendly for Fortify
+        Function<NodeRef, DiffEntry> fn_DiffEntry_new =  new Function<NodeRef, DiffEntry>() {
+            @Override
+            public DiffEntry apply(NodeRef treeRef) {
+                return new DiffEntry(treeRef, null);
+            }};
 
-        Iterator<DiffEntry> featureDeletes = Iterators.transform(features, (featurePath) -> {
-            Node node = RevObjectFactory.defaultInstance().createNode(
-                    NodeRef.nodeFromPath(featurePath), ObjectId.NULL, ObjectId.NULL, TYPE.FEATURE,
-                    null, null);
-            String parentPath = NodeRef.parentPath(featurePath);
-            NodeRef oldFeature = new NodeRef(node, parentPath, ObjectId.NULL);
-            return new DiffEntry(oldFeature, null);
-        });
+        Iterator<DiffEntry> treeDeletes = Iterators.transform(trees,
+                fn_DiffEntry_new);
+
+
+//        (featurePath) -> {
+//            Node node = RevObjectFactory.defaultInstance().createNode(
+//                    NodeRef.nodeFromPath(featurePath), ObjectId.NULL, ObjectId.NULL, TYPE.FEATURE,
+//                    null, null);
+//            String parentPath = NodeRef.parentPath(featurePath);
+//            NodeRef oldFeature = new NodeRef(node, parentPath, ObjectId.NULL);
+//            return new DiffEntry(oldFeature, null);
+//        }
+        Function<String,DiffEntry> f = new Function<String, DiffEntry>() {
+            @Override
+            public DiffEntry apply(String featurePath) {
+                Node node = RevObjectFactory.defaultInstance().createNode(
+                        NodeRef.nodeFromPath(featurePath), ObjectId.NULL, ObjectId.NULL, TYPE.FEATURE,
+                        null, null);
+                String parentPath = NodeRef.parentPath(featurePath);
+                NodeRef oldFeature = new NodeRef(node, parentPath, ObjectId.NULL);
+                return new DiffEntry(oldFeature, null);
+            }};
+
+
+        Iterator<DiffEntry> featureDeletes = Iterators.transform(features, f);
 
         ProgressListener progress = DefaultProgressListener.NULL;
         index.stage(progress, Iterators.concat(treeDeletes, featureDeletes), -1);

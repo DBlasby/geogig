@@ -115,7 +115,14 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
 
     private Set<RevTag> resolveWantTags(List<RefRequest> tagRequests) {
 
-        Iterable<ObjectId> ids = transform(tagRequests, (r) -> r.want);
+        //(r) -> r.want
+        Function<RefRequest, ObjectId> fn =  new Function<RefRequest, ObjectId>() {
+            @Override
+            public ObjectId apply(RefRequest r) {
+                return r.want;
+            }};
+
+        Iterable<ObjectId> ids = transform(tagRequests, fn);
 
         Iterator<RevTag> tags = objectDatabase().getAll(ids, NOOP_LISTENER, RevTag.class);
 
@@ -128,7 +135,15 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
         Iterable<ObjectId> ids = transform(filter(refs, filter), function);
         if (isTags) {
             Iterator<RevTag> tags = objectDatabase().getAll(ids, NOOP_LISTENER, RevTag.class);
-            ids = newArrayList(Iterators.transform(tags, (t) -> t.getCommitId()));
+
+            //(t) -> t.getCommitId()
+            Function<RevTag, ObjectId> fn =  new Function<RevTag, ObjectId>() {
+                @Override
+                public ObjectId apply(RevTag t) {
+                    return t.getCommitId();
+                }};
+
+            ids = newArrayList(Iterators.transform(tags, fn));
         }
         return Sets.newHashSet(ids);
     }

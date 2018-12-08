@@ -19,6 +19,7 @@ import static org.locationtech.geogig.remotes.RefDiff.Type.REMOVED_REF;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Function;
 import org.locationtech.geogig.model.NodeRef;
 import org.locationtech.geogig.model.ObjectId;
 import org.locationtech.geogig.model.Ref;
@@ -238,7 +239,15 @@ public class FetchOp extends AbstractGeoGigOp<TransferSummary> {
     }
 
     public List<String> getRemoteNames() {
-        return Lists.transform(argsBuilder.remotes, (remote) -> remote.getName());
+
+        //(remote) -> remote.getName()
+        Function<Remote, String> fn =  new Function<Remote, String>() {
+            @Override
+            public String apply(Remote remote) {
+                return remote.getName();
+            }};
+
+        return Lists.transform(argsBuilder.remotes, fn);
     }
 
     /**
