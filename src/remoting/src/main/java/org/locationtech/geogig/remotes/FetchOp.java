@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import org.locationtech.geogig.model.NodeRef;
 import org.locationtech.geogig.model.ObjectId;
 import org.locationtech.geogig.model.Ref;
@@ -360,7 +361,15 @@ public class FetchOp extends AbstractGeoGigOp<TransferSummary> {
             if (args.prune) {
                 prune(remoteRemoteRefs, localRemoteRefs, needUpdate);
             }
-            for (RefDiff ref : filter(needUpdate, (r) -> r.getType() != REMOVED_REF)) {
+
+            //(r) -> r.getType() != REMOVED_REF
+            Predicate<RefDiff> fn =  new Predicate<RefDiff>() {
+                @Override
+                public boolean apply(RefDiff r) {
+                    return r.getType() != REMOVED_REF;
+                }};
+
+            for (RefDiff ref : filter(needUpdate, fn)) {
                 final Optional<Integer> repoDepth = repository.getDepth();
                 final boolean isShallow = repoDepth.isPresent();
 

@@ -481,15 +481,23 @@ public class PreOrderDiffWalk {
                 Set<ObjectId> lbucketIds = new HashSet<>();
                 Set<ObjectId> rbucketIds = new HashSet<>();
 
+                // index -> this.bucketIndex.append(index, left, right)
+                Function<Integer, BucketIndex> fn =  new Function<Integer, BucketIndex>() {
+                    @Override
+                    public BucketIndex apply(Integer index) {
+                        return bucketIndex.append(index, left, right);
+                    }};
+
+
                 left.forEachBucket(bucket -> {
                     lbucketIds.add(bucket.getObjectId());
                     indices.computeIfAbsent(Integer.valueOf(bucket.getIndex()),
-                            index -> this.bucketIndex.append(index, left, right));
+                            fn);
                 });
                 right.forEachBucket(bucket -> {
                     rbucketIds.add(bucket.getObjectId());
                     indices.computeIfAbsent(Integer.valueOf(bucket.getIndex()),
-                            index -> this.bucketIndex.append(index, left, right));
+                            fn);
                 });
                 childBucketIndexes = newTreeSet(indices.values());
 

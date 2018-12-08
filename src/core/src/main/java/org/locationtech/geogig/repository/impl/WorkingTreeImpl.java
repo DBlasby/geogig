@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.google.common.base.Predicate;
 import org.eclipse.jdt.annotation.Nullable;
 import org.locationtech.geogig.data.FindFeatureTypeTrees;
 import org.locationtech.geogig.model.DiffEntry;
@@ -379,7 +380,15 @@ public class WorkingTreeImpl implements WorkingTree {
 
         Iterator<RevFeature> features = Iterators.transform(featureInfos, treeBuildingTransformer);
         features = Iterators.filter(features, Predicates.notNull());
-        features = Iterators.filter(features, (f) -> !progress.isCanceled());
+
+        // (f) -> !progress.isCanceled()
+        Predicate<RevFeature> fn =  new Predicate<RevFeature>() {
+            @Override
+            public boolean apply(RevFeature f) {
+                return !progress.isCanceled();
+            }};
+
+        features = Iterators.filter(features, fn);
 
         Stopwatch insertTime = Stopwatch.createStarted();
         indexDatabase.putAll(features);
