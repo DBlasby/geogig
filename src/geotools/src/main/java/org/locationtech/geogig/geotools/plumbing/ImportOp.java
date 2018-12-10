@@ -571,8 +571,15 @@ public class ImportOp extends AbstractGeoGigOp<RevTree> {
     private Iterator<Feature> transformIterator(Iterator<NodeRef> nodeIterator,
             final RevFeatureType newFeatureType) {
 
+        //   (node) -> alter(node, newFeatureType)
+        Function<NodeRef, Feature> fn =  new Function<NodeRef, Feature>() {
+            @Override
+            public Feature apply(NodeRef node) {
+                return  alter(node, newFeatureType);
+            }};
+
         Iterator<Feature> iterator = Iterators.transform(nodeIterator,
-                (node) -> alter(node, newFeatureType));
+                fn);
 
         return iterator;
 

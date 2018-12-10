@@ -126,7 +126,15 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
                 return  o.have.get();
             }};
 
-        return resolveHeadCommits(refs, isTags, (r) -> r.have.isPresent(),fn);
+        //(r) -> r.have.isPresent()
+        Predicate<RefRequest> fn2 =  new Predicate<RefRequest>() {
+            @Override
+            public boolean apply(RefRequest r) {
+                return r.have.isPresent();
+            }};
+
+
+        return resolveHeadCommits(refs, isTags, fn2,fn);
     }
 
     private Set<RevTag> resolveWantTags(List<RefRequest> tagRequests) {

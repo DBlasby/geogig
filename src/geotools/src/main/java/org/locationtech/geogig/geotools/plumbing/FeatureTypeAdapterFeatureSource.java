@@ -101,7 +101,7 @@ class FeatureTypeAdapterFeatureSource<T extends FeatureType, F extends Feature>
                             GeoToolsOpException.StatusCode.INCOMPATIBLE_FEATURE_TYPE);
                 }
 
-                GeometryDescriptor geomDescriptorOrg = delegate.getSchema().getGeometryDescriptor();
+                GeometryDescriptor geomDescriptorOrg = ((T)delegate.getSchema()).getGeometryDescriptor();
                 GeometryDescriptor geomDescriptorDest = featureType.getGeometryDescriptor();
                 if (!geomDescriptorOrg.getType().getBinding()
                         .equals(geomDescriptorDest.getType().getBinding())) {
@@ -109,7 +109,7 @@ class FeatureTypeAdapterFeatureSource<T extends FeatureType, F extends Feature>
                             GeoToolsOpException.StatusCode.INCOMPATIBLE_FEATURE_TYPE);
                 }
 
-                AbstractReferenceSystem crsOrg = (AbstractReferenceSystem) delegate.getSchema()
+                AbstractReferenceSystem crsOrg = (AbstractReferenceSystem) ((T)delegate.getSchema())
                         .getCoordinateReferenceSystem();
                 AbstractReferenceSystem crsDest = (AbstractReferenceSystem) featureType
                         .getCoordinateReferenceSystem();
