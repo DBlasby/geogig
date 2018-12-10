@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import org.eclipse.jdt.annotation.Nullable;
 import org.locationtech.geogig.model.ObjectId;
 import org.locationtech.geogig.model.Ref;
@@ -208,9 +209,17 @@ class PackImpl implements Pack {
                 continue;
             }
             for (ObjectId parentId : parentIds) {
+
+                //() -> source.getCommit(parentId)
+                Supplier<RevCommit> fn = new Supplier<RevCommit>() {
+                    @Override public RevCommit get() {
+                        return source.getCommit(parentId);
+                    }
+                };
+
                 final @Nullable RevCommit parent = parentId.isNull() ? null
                         : Optional.fromNullable((RevCommit) rootsById.get(parentId))
-                                .or(() -> source.getCommit(parentId));
+                                .or(fn);
 
                 ObjectId oldRootTreeId = parent == null ? RevTree.EMPTY_TREE_ID
                         : parent.getTreeId();

@@ -95,7 +95,7 @@ class FeatureTypeAdapterFeatureSource<T extends FeatureType, F extends Feature>
 
             @Override
             public FeatureIterator<F> features() {
-                if (delegate.getSchema().getDescriptors().size() != featureType.getDescriptors()
+                if (((T)delegate.getSchema()).getDescriptors().size() != featureType.getDescriptors()
                         .size()) {
                     throw new GeoToolsOpException(
                             GeoToolsOpException.StatusCode.INCOMPATIBLE_FEATURE_TYPE);

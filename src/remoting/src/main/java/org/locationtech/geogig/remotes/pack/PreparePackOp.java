@@ -126,7 +126,7 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
                 return  o.have.get();
             }};
 
-        return resolveHeadCommits(refs, isTags, (r) -> r.have.isPresent(), (o) -> o.have.get());
+        return resolveHeadCommits(refs, isTags, (r) -> r.have.isPresent(),fn);
     }
 
     private Set<RevTag> resolveWantTags(List<RefRequest> tagRequests) {
@@ -194,7 +194,7 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
             }};
 
 
-        refs = newArrayList(filter(req.getRefs(), (r) -> !r.name.startsWith(Ref.TAGS_PREFIX)));
+        refs = newArrayList(filter(req.getRefs(), fn));
 
         return refs;
     }
