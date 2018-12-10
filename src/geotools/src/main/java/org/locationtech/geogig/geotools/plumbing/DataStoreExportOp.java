@@ -205,7 +205,7 @@ public abstract class DataStoreExportOp<T> extends AbstractGeoGigOp<T> {
             }};
 
         final Set<String> repoLayers = Sets
-                .newHashSet(Iterables.transform(featureTreeRefs, (n) -> n.name()));
+                .newHashSet(Iterables.transform(featureTreeRefs, fn));
 
         if (treePaths == null || treePaths.isEmpty()) {
             exportLayers = repoLayers;

@@ -302,7 +302,7 @@ public class GeoGigDataStore extends ContentDataStore implements DataStore {
             }};
 
         return ImmutableList
-                .copyOf(Collections2.transform(typeTrees, (ref) -> getDescriptorName(ref)));
+                .copyOf(Collections2.transform(typeTrees, fn));
     }
 
     private List<NodeRef> findTypeRefs(@Nullable Transaction tx) {

@@ -106,10 +106,26 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
     }
 
     private Set<ObjectId> resolveWantCommits(List<RefRequest> refs, boolean isTags) {
-        return resolveHeadCommits(refs, isTags, Predicates.alwaysTrue(), (o) -> o.want);
+
+        //  (o) -> o.want
+        Function<RefRequest, ObjectId> fn =  new Function<RefRequest, ObjectId>() {
+            @Override
+            public ObjectId apply(RefRequest o) {
+                return o.want;
+            }};
+
+        return resolveHeadCommits(refs, isTags, Predicates.alwaysTrue(), fn);
     }
 
     private Set<ObjectId> resolveHaveCommits(List<RefRequest> refs, boolean isTags) {
+
+        //  (o) -> o.have.get()
+        Function<RefRequest, ObjectId> fn =  new Function<RefRequest, ObjectId>() {
+            @Override
+            public ObjectId apply(RefRequest o) {
+                return  o.have.get();
+            }};
+
         return resolveHeadCommits(refs, isTags, (r) -> r.have.isPresent(), (o) -> o.have.get());
     }
 
@@ -153,7 +169,14 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
 
         List<RefRequest> refs;
 
-        refs = newArrayList(filter(req.getRefs(), (r) -> r.name.startsWith(Ref.TAGS_PREFIX)));
+        // (r) -> r.name.startsWith(Ref.TAGS_PREFIX)
+        Predicate<RefRequest> fn =  new Predicate<RefRequest>() {
+            @Override
+            public boolean apply(RefRequest r) {
+                return r.name.startsWith(Ref.TAGS_PREFIX);
+            }};
+
+        refs = newArrayList(filter(req.getRefs(),fn));
 
         return refs;
     }
@@ -162,6 +185,14 @@ public class PreparePackOp extends AbstractGeoGigOp<Pack> {
         final PackRequest req = this.request;
 
         List<RefRequest> refs;
+
+        // (r) -> !r.name.startsWith(Ref.TAGS_PREFIX)
+        Predicate<RefRequest> fn =  new Predicate<RefRequest>() {
+            @Override
+            public boolean apply(RefRequest r) {
+                return !r.name.startsWith(Ref.TAGS_PREFIX);
+            }};
+
 
         refs = newArrayList(filter(req.getRefs(), (r) -> !r.name.startsWith(Ref.TAGS_PREFIX)));
 

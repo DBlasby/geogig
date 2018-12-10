@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
+import com.google.common.base.Predicate;
 import org.eclipse.jdt.annotation.Nullable;
 import org.locationtech.geogig.model.ObjectId;
 import org.locationtech.geogig.model.Ref;
@@ -144,10 +145,19 @@ class PackImpl implements Pack {
                 Iterator<RevObject> missingContents;
                 Iterator<RevCommit> commitsIterator;
                 missingContents = sourceStore.getAll(() -> missingContentIds);
-                commitsIterator = Iterators.filter(commits.iterator(), (c) -> {
-                    objectReport.addCommit();
-                    return true;
-                });
+
+//                (c) -> {
+//                    objectReport.addCommit();
+//                    return true;
+//                }
+                Predicate<RevCommit> fn =  new Predicate<RevCommit>() {
+                    @Override
+                    public boolean apply(RevCommit c) {
+                        objectReport.addCommit();
+                        return true;
+                    }};
+
+                commitsIterator = Iterators.filter(commits.iterator(), fn);
 
                 allObjects = Iterators.concat(missingContents, commitsIterator);
             }

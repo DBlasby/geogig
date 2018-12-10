@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.sql.DataSource;
 
+import com.google.common.base.Predicate;
 import org.eclipse.jdt.annotation.Nullable;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geopkg.FeatureEntry;
@@ -272,9 +273,16 @@ public class InterchangeFormat {
                     return at.getTableName();
                 }};
 
+            // k -> importTables.isEmpty() || importTables.contains(k)
+            Predicate<String> fn =  new Predicate<String>() {
+                @Override
+                public boolean apply(String k) {
+                    return importTables.isEmpty() || importTables.contains(k);
+                }};
+
             final Map<String, AuditTable> tables = Maps.filterKeys(
                     Maps.uniqueIndex(metadata.getAuditTables(), fn_getTableName),
-                    k -> importTables.isEmpty() || importTables.contains(k));
+                    fn);
 
             checkState(tables.size() > 0, "No table to import.");
             Iterator<AuditTable> iter = tables.values().iterator();

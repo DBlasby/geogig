@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import org.locationtech.geogig.model.Ref;
 import org.locationtech.geogig.model.RevTag;
 import org.locationtech.geogig.plumbing.MapRef;
@@ -114,10 +115,18 @@ public class DiffRemoteRefsOp extends AbstractGeoGigOp<List<RefDiff>> {
             final String mappedBranch = remote.getInfo().getMappedBranch();
             checkNotNull(mappedBranch);
             final String mappedBranchName = Ref.localName(mappedBranch);
+
+            // (name) -> Ref.localName(name).equals(mappedBranchName)
+            Predicate<String> fn =  new Predicate<String>() {
+                @Override
+                public boolean apply(String name) {
+                    return Ref.localName(name).equals(mappedBranchName);
+                }};
+
             remotes = Maps.filterKeys(remotes,
-                    (name) -> Ref.localName(name).equals(mappedBranchName));
+                    fn);
             locals = Maps.filterKeys(locals,
-                    (name) -> Ref.localName(name).equals(mappedBranchName));
+                    fn);
         }
         MapDifference<String, Ref> difference = Maps.difference(remotes, locals);
 
